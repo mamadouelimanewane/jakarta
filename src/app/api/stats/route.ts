@@ -17,10 +17,9 @@ export async function GET(req: NextRequest) {
     prisma.conducteur.findUnique({ where: { id: cid } }),
   ])
 
-  const txMonths = await prisma.transaction.groupBy({
-    by: ['createdAt'],
-    where: { conducteurId: cid, type: { in: ['EPARGNE_DEPOT', 'EPARGNE_RETRAIT'] } },
-    _sum: { montant: true },
+  // groupBy createdAt groupait par timestamp exact — remplacé par simple count
+  const txCount = await prisma.transaction.count({
+    where: { conducteurId: cid }
   })
 
   return NextResponse.json({
@@ -31,6 +30,7 @@ export async function GET(req: NextRequest) {
     formations_completees: formations.filter(f => f.completee).length,
     formations_total: formations.length,
     credits_actifs: credits.filter(c => c.statut === 'APPROUVE').length,
+    transactions_total: txCount,
     solde_epargne: conducteur?.solde_epargne ?? 0,
     points_fidelite: conducteur?.points_fidelite ?? 0,
     statut_regularisation: conducteur?.statut_regularisation ?? 'NON_REGULARISE',

@@ -43,42 +43,41 @@ export async function POST(req: NextRequest) {
 
   const police = `POL-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 
-  const assurance = await prisma.assurance.create({
-    data: {
-      conducteurId: user.conducteur.id,
-      type,
-      compagnie: offre.compagnie,
-      numero_police: police,
-      prime_mensuelle: offre.prime_mensuelle,
-      date_debut,
-      date_fin,
-      statut: 'ACTIVE',
-    }
-  })
-
-  await prisma.transaction.create({
-    data: {
-      conducteurId: user.conducteur.id,
-      type: 'PAIEMENT_ASSURANCE',
-      montant: offre.prime_mensuelle,
-      moyen_paiement: moyen_paiement || 'WAVE',
-      description: `Première prime ${offre.label}`,
-    }
-  })
-
-  await prisma.conducteur.update({
-    where: { id: user.conducteur.id },
-    data: { points_fidelite: { increment: 200 } }
-  })
-
-  await prisma.notification.create({
-    data: {
-      userId: user.id,
-      titre: 'Assurance souscrite',
-      message: `Votre ${offre.label} avec ${offre.compagnie} est active. Police n° ${police}`,
-      type: 'SUCCESS',
-    }
-  })
+  const [assurance] = await prisma.$transaction([
+    prisma.assurance.create({
+      data: {
+        conducteurId: user.conducteur.id,
+        type,
+        compagnie: offre.compagnie,
+        numero_police: police,
+        prime_mensuelle: offre.prime_mensuelle,
+        date_debut,
+        date_fin,
+        statut: 'ACTIVE',
+      }
+    }),
+    prisma.transaction.create({
+      data: {
+        conducteurId: user.conducteur.id,
+        type: 'PAIEMENT_ASSURANCE',
+        montant: offre.prime_mensuelle,
+        moyen_paiement: moyen_paiement || 'WAVE',
+        description: `Première prime ${offre.label}`,
+      }
+    }),
+    prisma.conducteur.update({
+      where: { id: user.conducteur.id },
+      data: { points_fidelite: { increment: 200 } }
+    }),
+    prisma.notification.create({
+      data: {
+        userId: user.id,
+        titre: 'Assurance souscrite',
+        message: `Votre ${offre.label} avec ${offre.compagnie} est active. Police n° ${police}`,
+        type: 'SUCCESS',
+      }
+    }),
+  ])
 
   return NextResponse.json(assurance, { status: 201 })
 }
