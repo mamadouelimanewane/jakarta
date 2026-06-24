@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Role: CONDUCTEUR | ADMIN | PARTENAIRE
+// statut_kyc: EN_ATTENTE | VALIDE | REJETE
+model User {
+  id           String   @id @default(cuid())
+  telephone    String   @unique
+  email        String?  @unique
+  password     String
+  nom          String
+  prenom       String
+  role         String   @default("CONDUCTEUR")
+  statut_kyc   String   @default("EN_ATTENTE")
+  photo_profil String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  conducteur Conducteur?
+  sessions   Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// statut_regularisation: NON_REGULARISE | EN_COURS | REGULARISE
+model Conducteur {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  date_naissance        String?
+  adresse               String?
+  numero_cni            String?
+  points_fidelite       Int      @default(0)
+  solde_epargne         Float    @default(0)
+  statut_regularisation String   @default("NON_REGULARISE")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicules    Vehicule[]
+  dossiers     Dossier[]
+  assurances   Assurance[]
+  transactions Transaction[]
+  progressions Progression[]
+  microcredits MicroCredit[]
+}
+
+model Vehicule {
+  id              String   @id @default(cuid())
+  conducteurId    String
+  immatriculation String?
+  marque          String
+  modele          String
+  annee           Int
+  couleur         String?
+  statut          String   @default("EN_ATTENTE")
+  createdAt       DateTime @default(now())
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+}
+
+// type: IMMATRICULATION | PERMIS_CONDUIRE | RENOUVELLEMENT_PERMIS | RENOUVELLEMENT_IMMAT | CARTE_GRISE
+// statut: SOUMIS | EN_COURS | EN_ATTENTE_DOCUMENTS | APPROUVE | REJETE | COMPLETE
+model Dossier {
+  id              String    @id @default(cuid())
+  conducteurId    String
+  type            String
+  statut          String    @default("SOUMIS")
+  montant_paye    Float     @default(0)
+  moyen_paiement  String?
+  notes           String?
+  date_soumission DateTime  @default(now())
+  date_traitement DateTime?
+  documents       Document[]
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  dossierId String
+  type      String
+  nom       String
+  url       String
+  statut    String   @default("EN_ATTENTE")
+  createdAt DateTime @default(now())
+
+  dossier Dossier @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+}
+
+model Assurance {
+  id              String   @id @default(cuid())
+  conducteurId    String
+  type            String
+  compagnie       String
+  numero_police   String?
+  prime_mensuelle Float
+  date_debut      DateTime
+  date_fin        DateTime
+  statut          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+}
+
+// type: EPARGNE_DEPOT | EPARGNE_RETRAIT | PAIEMENT_DOSSIER | PAIEMENT_ASSURANCE | REMBOURSEMENT_CREDIT | RECOMPENSE
+model Transaction {
+  id             String   @id @default(cuid())
+  conducteurId   String
+  type           String
+  montant        Float
+  moyen_paiement String
+  description    String?
+  statut         String   @default("SUCCESS")
+  createdAt      DateTime @default(now())
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+}
+
+model Formation {
+  id             String  @id @default(cuid())
+  titre          String
+  description    String
+  categorie      String
+  duree_minutes  Int
+  niveau         String  @default("DEBUTANT")
+  langue         String  @default("FR")
+  image_url      String?
+  actif          Boolean @default(true)
+  createdAt      DateTime @default(now())
+
+  progressions Progression[]
+}
+
+model Progression {
+  id              String    @id @default(cuid())
+  conducteurId    String
+  formationId     String
+  pourcentage     Int       @default(0)
+  completee       Boolean   @default(false)
+  date_completion DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+  formation  Formation  @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  @@unique([conducteurId, formationId])
+}
+
+// statut: EN_ATTENTE | APPROUVE | REMBOURSE | REJETE
+model MicroCredit {
+  id               String    @id @default(cuid())
+  conducteurId     String
+  montant          Float
+  taux_interet     Float     @default(5.0)
+  duree_mois       Int
+  mensualite       Float
+  motif            String?
+  statut           String    @default("EN_ATTENTE")
+  date_demande     DateTime  @default(now())
+  date_approbation DateTime?
+
+  conducteur Conducteur @relation(fields: [conducteurId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  titre     String
+  message   String
+  type      String   @default("INFO")
+  lue       Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
