@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/Button'
 import { useUser } from '@/hooks/useUser'
 
@@ -38,18 +37,15 @@ export default function FormationsPage() {
   const enCours = formations.filter(f => f.progression && !f.progression.completee).length
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Formations & Éducation</h1>
-            <p className="text-gray-500 mt-1">Améliorez vos compétences et gagnez des points fidélité</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Formations & Éducation</h1>
+            <p className="text-gray-500 mt-1 text-sm">Améliorez vos compétences et gagnez des points fidélité</p>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 lg:gap-4">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 text-center">
               <p className="text-3xl font-bold text-blue-600">{formations.length}</p>
               <p className="text-sm text-gray-500 mt-1">Formations disponibles</p>
@@ -139,7 +135,6 @@ export default function FormationsPage() {
             })}
           </div>
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

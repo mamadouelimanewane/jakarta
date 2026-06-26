@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { useUser } from '@/hooks/useUser'
 import { formatMontant } from '@/lib/utils'
 
@@ -38,18 +37,15 @@ export default function FidelitePage() {
   const pct = Math.min(100, Math.round((points / prochainNiveau) * 100))
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Programme de Fidélité</h1>
-            <p className="text-gray-500 mt-1">Gagnez des points et débloquez des récompenses exclusives</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Programme de Fidélité</h1>
+            <p className="text-gray-500 mt-1 text-sm">Gagnez des points et débloquez des récompenses exclusives</p>
           </div>
 
           {/* Carte fidélité */}
-          <div className={`bg-gradient-to-r ${niveauBg} rounded-2xl p-6 text-white`}>
+          <div className={`bg-gradient-to-r ${niveauBg} rounded-2xl p-5 lg:p-6 text-white`}>
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-white/80 text-sm">Membre Jakarta</p>
@@ -122,7 +118,7 @@ export default function FidelitePage() {
           {/* Niveaux */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="font-semibold text-gray-900 mb-4">Les niveaux du programme</h2>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
               {[
                 { n: 'Bronze', pts: '0 - 1 999', icon: '🥉', avantage: 'Accès aux récompenses de base' },
                 { n: 'Argent', pts: '2 000 - 4 999', icon: '🥈', avantage: 'Réductions exclusives + priorité support' },
@@ -139,7 +135,6 @@ export default function FidelitePage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

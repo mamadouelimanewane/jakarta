@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
 import { StatCard } from '@/components/ui/Card'
@@ -78,18 +77,15 @@ export default function FinancesPage() {
   const totalDepose = transactions.filter(t => t.type === 'EPARGNE_DEPOT').reduce((s, t) => s + t.montant, 0)
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Finances</h1>
-            <p className="text-gray-500 mt-1">Gérez votre épargne et vos micro-crédits</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Finances</h1>
+            <p className="text-gray-500 mt-1 text-sm">Gérez votre épargne et vos micro-crédits</p>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
             <StatCard icon={<span className="text-xl">💰</span>} label="Solde épargne" value={formatMontant(solde)} sub="disponible maintenant" color="green" />
             <StatCard icon={<span className="text-xl">📈</span>} label="Total déposé" value={formatMontant(totalDepose)} sub="depuis l'ouverture" color="blue" />
             <StatCard icon={<span className="text-xl">💼</span>} label="Crédits actifs" value={credits.filter(c => c.statut === 'APPROUVE').length} sub="en cours" color="orange" />
@@ -210,7 +206,6 @@ export default function FinancesPage() {
             </div>
           )}
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

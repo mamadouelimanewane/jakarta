@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { StatCard } from '@/components/ui/Card'
 import { useUser } from '@/hooks/useUser'
 import { formatMontant, getStatutColor, getStatutLabel } from '@/lib/utils'
@@ -28,39 +27,36 @@ export default function Dashboard() {
   )) : 0
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
 
           {/* Statut régularisation */}
-          <div className="bg-gradient-to-r from-[#003366] to-[#0055a4] rounded-2xl p-6 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#003366] to-[#0055a4] rounded-2xl p-5 lg:p-6 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="text-white/70 text-sm">Statut de régularisation</p>
-              <h2 className="text-2xl font-bold mt-1">{getStatutLabel(stats?.statut_regularisation || 'NON_REGULARISE')}</h2>
+              <h2 className="text-xl lg:text-2xl font-bold mt-1">{getStatutLabel(stats?.statut_regularisation || 'NON_REGULARISE')}</h2>
               <p className="text-white/60 text-sm mt-1">Complétez vos démarches pour travailler en toute légalité</p>
             </div>
-            <div className="text-right">
-              <div className="relative w-24 h-24">
-                <svg viewBox="0 0 36 36" className="w-24 h-24 -rotate-90">
+            <div className="flex-shrink-0">
+              <div className="relative w-20 h-20 lg:w-24 lg:h-24">
+                <svg viewBox="0 0 36 36" className="w-20 h-20 lg:w-24 lg:h-24 -rotate-90">
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3"/>
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#FFD700" strokeWidth="3" strokeDasharray={`${pct}, 100`}/>
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center"><span className="text-xl font-bold">{pct}%</span></div>
+                <div className="absolute inset-0 flex items-center justify-center"><span className="text-lg lg:text-xl font-bold">{pct}%</span></div>
               </div>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
             <StatCard icon={<span className="text-xl">📋</span>} label="Dossiers actifs" value={stats?.dossiers_total ?? 0} sub={`${stats?.dossiers_en_cours ?? 0} en cours`} color="blue" />
             <StatCard icon={<span className="text-xl">🛡️</span>} label="Assurances" value={stats?.assurances_actives ?? 0} sub="polices actives" color="green" />
             <StatCard icon={<span className="text-xl">💰</span>} label="Épargne" value={formatMontant(stats?.solde_epargne ?? 0)} sub="solde disponible" color="orange" />
             <StatCard icon={<span className="text-xl">⭐</span>} label="Points fidélité" value={(stats?.points_fidelite ?? 0).toLocaleString('fr-FR')} sub="points cumulés" color="yellow" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             {/* Derniers dossiers */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -108,20 +104,19 @@ export default function Dashboard() {
           </div>
 
           {/* Formation en cours */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm px-6 py-4 flex items-center justify-between">
-            <div>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm px-4 lg:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex-shrink-0">
               <p className="text-sm text-gray-500">Formations complétées</p>
               <p className="text-lg font-bold text-gray-900">{stats?.formations_completees ?? 0} / {stats?.formations_total ?? 0}</p>
             </div>
-            <div className="flex-1 mx-8">
+            <div className="flex-1">
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className="h-2 bg-blue-600 rounded-full transition-all" style={{ width: `${stats?.formations_total ? (stats.formations_completees / stats.formations_total) * 100 : 0}%` }} />
               </div>
             </div>
-            <Link href="/formations" className="text-sm text-blue-600 font-medium hover:underline whitespace-nowrap">Continuer →</Link>
+            <Link href="/formations" className="text-sm text-blue-600 font-medium hover:underline whitespace-nowrap self-end sm:self-auto">Continuer →</Link>
           </div>
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

@@ -22,12 +22,12 @@ export function Header({ user }: { user: any }) {
   }
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10">
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">
+    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-10">
+      <div className="min-w-0">
+        <h2 className="text-base lg:text-lg font-semibold text-gray-900 truncate">
           Bonjour, {user?.prenom} 👋
         </h2>
-        <p className="text-xs text-gray-500">Bienvenue sur votre espace Jakarta</p>
+        <p className="text-xs text-gray-500 hidden sm:block">Bienvenue sur votre espace Jakarta</p>
       </div>
 
       <div className="flex items-center gap-3">
@@ -43,7 +43,7 @@ export function Header({ user }: { user: any }) {
           </button>
 
           {open && (
-            <div className="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+            <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] max-w-sm bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                 <span className="font-semibold text-gray-900 text-sm">Notifications</span>
                 <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>

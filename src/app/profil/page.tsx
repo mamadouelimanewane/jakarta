@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { useUser } from '@/hooks/useUser'
@@ -48,17 +47,14 @@ export default function ProfilPage() {
   ].filter(Boolean).length / 7 * 100 : 0
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mon Profil</h1>
-            <p className="text-gray-500 mt-1">Gérez vos informations personnelles</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Mon Profil</h1>
+            <p className="text-gray-500 mt-1 text-sm">Gérez vos informations personnelles</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             {/* Carte profil */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center">
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-3">
@@ -109,7 +105,7 @@ export default function ProfilPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-5">Informations personnelles</h2>
               {msg && <div className={`p-3 rounded-lg text-sm mb-4 ${msg.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{msg}</div>}
               <form onSubmit={submit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="Prénom" value={form.prenom} onChange={set('prenom')} />
                   <Input label="Nom" value={form.nom} onChange={set('nom')} />
                 </div>
@@ -145,7 +141,6 @@ export default function ProfilPage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

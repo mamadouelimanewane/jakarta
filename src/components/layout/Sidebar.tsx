@@ -23,7 +23,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 min-h-screen bg-gradient-to-b from-[#003366] to-[#0055a4] flex flex-col shadow-xl">
+    <aside className="hidden lg:flex w-64 min-h-screen bg-gradient-to-b from-[#003366] to-[#0055a4] flex-col shadow-xl">
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <div className="flex items-center gap-3">

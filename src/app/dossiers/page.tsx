@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Input'
 import { useUser } from '@/hooks/useUser'
@@ -65,17 +64,14 @@ export default function DossiersPage() {
   const typeInfo = TYPES.find(t => t.value === type)
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header user={user} />
-        <main className="flex-1 p-6 space-y-6">
-          <div className="flex items-center justify-between">
+    <AppLayout user={user}>
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 space-y-4 lg:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Régularisation Administrative</h1>
-              <p className="text-gray-500 mt-1">Gérez vos dossiers administratifs en ligne</p>
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Régularisation Administrative</h1>
+              <p className="text-gray-500 mt-1 text-sm">Gérez vos dossiers administratifs en ligne</p>
             </div>
-            <Button onClick={() => { setShowForm(true); setMsg('') }}>+ Nouveau dossier</Button>
+            <Button onClick={() => { setShowForm(true); setMsg('') }} className="self-start sm:self-auto">+ Nouveau dossier</Button>
           </div>
 
           {msg && <div className={`p-3 rounded-lg text-sm ${msg.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{msg}</div>}
@@ -154,7 +150,7 @@ export default function DossiersPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-between text-xs text-gray-400 mb-4">
+                  <div className="hidden sm:flex justify-between text-xs text-gray-400 mb-4">
                     {steps.map(s => <span key={s}>{s}</span>)}
                   </div>
 
@@ -169,7 +165,6 @@ export default function DossiersPage() {
             })}
           </div>
         </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }
