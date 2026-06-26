@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils'
 const NAV = [
   { href: '/dashboard', icon: '🏠', label: 'Accueil' },
   { href: '/dossiers', icon: '📋', label: 'Dossiers' },
+  { href: '/assurances', icon: '🛡️', label: 'Assurances' },
   { href: '/finances', icon: '💰', label: 'Finances' },
-  { href: '/formations', icon: '📚', label: 'Formations' },
   { href: '/profil', icon: '👤', label: 'Profil' },
 ]
 
@@ -24,7 +24,7 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex-1 flex flex-col items-center justify-center gap-0.5 text-center transition-colors',
+                'relative flex-1 flex flex-col items-center justify-center gap-0.5 text-center transition-colors',
                 active ? 'text-[#003366]' : 'text-gray-400 hover:text-gray-600'
               )}
             >

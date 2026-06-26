@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -8,9 +9,15 @@ import { getStatutColor, getStatutLabel } from '@/lib/utils'
 
 export default function ProfilPage() {
   const { user, setUser } = useUser()
+  const router = useRouter()
   const [form, setForm] = useState({ nom: '', prenom: '', email: '', adresse: '', date_naissance: '', numero_cni: '' })
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
+
+  async function logout() {
+    await fetch('/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'logout' }) })
+    router.push('/login')
+  }
 
   useEffect(() => {
     if (user) {
@@ -137,6 +144,13 @@ export default function ProfilPage() {
                     Soumettre mes documents →
                   </button>
                 )}
+              </div>
+
+              {/* Déconnexion — visible sur mobile (sidebar cachée) */}
+              <div className="mt-6 lg:hidden">
+                <button onClick={logout} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 border border-red-200 hover:bg-red-50 transition-colors">
+                  🚪 Se déconnecter
+                </button>
               </div>
             </div>
           </div>

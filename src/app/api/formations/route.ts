@@ -53,18 +53,20 @@ export async function POST(req: NextRequest) {
   })
 
   if (completee) {
-    await prisma.conducteur.update({
-      where: { id: user.conducteur.id },
-      data: { points_fidelite: { increment: 300 } }
-    })
-    await prisma.notification.create({
-      data: {
-        userId: user.id,
-        titre: '🏆 Formation complétée !',
-        message: `Félicitations ! Vous avez terminé "${formation.titre}". +300 points fidélité.`,
-        type: 'SUCCESS',
-      }
-    })
+    await prisma.$transaction([
+      prisma.conducteur.update({
+        where: { id: user.conducteur.id },
+        data: { points_fidelite: { increment: 300 } }
+      }),
+      prisma.notification.create({
+        data: {
+          userId: user.id,
+          titre: '🏆 Formation complétée !',
+          message: `Félicitations ! Vous avez terminé "${formation.titre}". +300 points fidélité.`,
+          type: 'SUCCESS',
+        }
+      }),
+    ])
   }
 
   return NextResponse.json(prog)

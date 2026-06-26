@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <form onSubmit={submit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Prénom" placeholder="Moussa" value={form.prenom} onChange={set('prenom')} required />
               <Input label="Nom" placeholder="Diallo" value={form.nom} onChange={set('nom')} required />
             </div>

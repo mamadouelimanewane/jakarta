@@ -37,42 +37,40 @@ export async function POST(req: NextRequest) {
 
   const montant = TARIFS[type]
 
-  const dossier = await prisma.dossier.create({
-    data: {
-      conducteurId: user.conducteur.id,
-      type,
-      statut: moyen_paiement ? 'EN_COURS' : 'SOUMIS',
-      montant_paye: moyen_paiement ? montant : 0,
-      moyen_paiement: moyen_paiement || null,
-    }
-  })
-
-  if (moyen_paiement) {
-    await prisma.transaction.create({
+  const [dossier] = await prisma.$transaction([
+    prisma.dossier.create({
       data: {
         conducteurId: user.conducteur.id,
-        type: 'PAIEMENT_DOSSIER',
-        montant,
-        moyen_paiement,
-        description: `Paiement dossier ${type}`,
+        type,
+        statut: moyen_paiement ? 'EN_COURS' : 'SOUMIS',
+        montant_paye: moyen_paiement ? montant : 0,
+        moyen_paiement: moyen_paiement || null,
       }
-    })
-    // Mise à jour points fidélité
-    await prisma.conducteur.update({
-      where: { id: user.conducteur.id },
-      data: { points_fidelite: { increment: 100 } }
-    })
-  }
-
-  // Notification
-  await prisma.notification.create({
-    data: {
-      userId: user.id,
-      titre: 'Dossier soumis',
-      message: `Votre dossier ${type.replace('_', ' ')} a bien été soumis et est en cours de traitement.`,
-      type: 'SUCCESS',
-    }
-  })
+    }),
+    prisma.notification.create({
+      data: {
+        userId: user.id,
+        titre: 'Dossier soumis',
+        message: `Votre dossier ${type.replace('_', ' ')} a bien été soumis et est en cours de traitement.`,
+        type: 'SUCCESS',
+      }
+    }),
+    ...(moyen_paiement ? [
+      prisma.transaction.create({
+        data: {
+          conducteurId: user.conducteur.id,
+          type: 'PAIEMENT_DOSSIER',
+          montant,
+          moyen_paiement,
+          description: `Paiement dossier ${type}`,
+        }
+      }),
+      prisma.conducteur.update({
+        where: { id: user.conducteur.id },
+        data: { points_fidelite: { increment: 100 } }
+      }),
+    ] : []),
+  ] as any[])
 
   return NextResponse.json(dossier, { status: 201 })
 }
